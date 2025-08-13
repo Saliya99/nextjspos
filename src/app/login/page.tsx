@@ -9,9 +9,18 @@ import toast from 'react-hot-toast'
 import LoadingSpinner from '../components/LoadingSpinner'
 import FormField from '../components/forms/FormField'
 import { loginSchema, LoginFormData } from '../lib/schemas'
+import { 
+  EyeIcon, 
+  EyeSlashIcon, 
+  ShoppingCartIcon,
+  UserIcon,
+  LockClosedIcon,
+  SparklesIcon
+} from '@heroicons/react/24/outline'
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const { login } = useAuth()
   const router = useRouter()
 
@@ -25,114 +34,223 @@ export default function LoginPage() {
   })
 
   const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true)
     try {
       await login(data.email, data.password)
-      toast.success('Login successful!')
+      toast.success('Welcome back! Login successful', {
+        icon: '🎉',
+        style: {
+          borderRadius: '12px',
+          background: '#10B981',
+          color: '#fff',
+        },
+      })
       router.push('/dashboard')
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Login failed')
+      toast.error(error instanceof Error ? error.message : 'Login failed', {
+        icon: '❌',
+        style: {
+          borderRadius: '12px',
+          background: '#EF4444',
+          color: '#fff',
+        },
+      })
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  const handleDemoLogin = () => {
-    setValue('email', 'admin@example.com')
-    setValue('password', 'admin123')
-    toast.success('Demo admin credentials loaded!')
-  }
-
-  const handleCashierDemo = () => {
-    setValue('email', 'cashier@example.com')
-    setValue('password', 'cashier123')
-    toast.success('Demo cashier credentials loaded!')
+  const handleDemoLogin = (role: 'admin' | 'cashier') => {
+    const credentials = {
+      admin: { email: 'admin@smartretailer.com', password: 'admin123' },
+      cashier: { email: 'cashier@smartretailer.com', password: 'cashier123' }
+    }
+    
+    setValue('email', credentials[role].email)
+    setValue('password', credentials[role].password)
+    toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} demo credentials loaded!`, {
+      icon: '✨',
+      style: {
+        borderRadius: '12px',
+        background: '#3B82F6',
+        color: '#fff',
+      },
+    })
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <div className="mx-auto h-12 w-12 bg-primary-600 rounded-lg flex items-center justify-center">
-            <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-400/20 to-pink-600/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-blue-300/10 to-purple-300/10 rounded-full blur-3xl"></div>
+      </div>
+
+      {/* Floating elements */}
+      <div className="absolute top-20 left-20 w-4 h-4 bg-blue-400 rounded-full animate-bounce opacity-60"></div>
+      <div className="absolute top-32 right-32 w-3 h-3 bg-purple-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0.5s' }}></div>
+      <div className="absolute bottom-32 left-32 w-2 h-2 bg-pink-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '1s' }}></div>
+
+      <div className="max-w-md w-full space-y-8 relative z-10">
+        {/* Header */}
+        <div className="text-center">
+          <div className="mx-auto h-20 w-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
+            <ShoppingCartIcon className="h-10 w-10 text-white" />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to Smart Retailer
+          <h2 className="mt-8 text-center text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent">
+            Welcome Back
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Modern Point of Sale System
+          <p className="mt-3 text-center text-lg text-gray-600 font-medium">
+            Sign in to <span className="text-blue-600 font-bold">Smart Retailer</span>
+          </p>
+          <p className="mt-1 text-center text-sm text-gray-500">
+            Your modern point of sale solution
           </p>
         </div>
         
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-4">
-            <FormField
-              label="Email address"
-              type="email"
-              autoComplete="email"
-              placeholder="Email address"
-              error={errors.email}
-              required
-              {...register('email')}
-            />
-            <div className="relative">
-              <FormField
-                label="Password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                placeholder="Password"
-                error={errors.password}
-                required
-                {...register('password')}
-              />
+        {/* Login Form */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-5">
+              {/* Email Field */}
+              <div className="relative">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <UserIcon className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="email"
+                    autoComplete="email"
+                    className={`block w-full pl-12 pr-4 py-4 border-2 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 hover:bg-white/80 ${
+                      errors.email ? 'border-red-300 focus:ring-red-500' : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                    placeholder="Enter your email"
+                    {...register('email')}
+                  />
+                </div>
+                {errors.email && (
+                  <p className="mt-2 text-sm text-red-600 flex items-center">
+                    <span className="mr-1">⚠️</span>
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Password Field */}
+              <div className="relative">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <LockClosedIcon className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    className={`block w-full pl-12 pr-12 py-4 border-2 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 hover:bg-white/80 ${
+                      errors.password ? 'border-red-300 focus:ring-red-500' : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                    placeholder="Enter your password"
+                    {...register('password')}
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center hover:bg-gray-100 rounded-r-xl transition-colors duration-200"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="mt-2 text-sm text-red-600 flex items-center">
+                    <span className="mr-1">⚠️</span>
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Sign In Button */}
+            <div>
               <button
-                type="button"
-                className="absolute right-3 top-8 flex items-center"
-                onClick={() => setShowPassword(!showPassword)}
+                type="submit"
+                disabled={isSubmitting || isLoading}
+                className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-base font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                {showPassword ? (
-                  <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                  </svg>
+                {isSubmitting || isLoading ? (
+                  <div className="flex items-center">
+                    <LoadingSpinner size="sm" className="mr-3" />
+                    <span>Signing you in...</span>
+                  </div>
                 ) : (
-                  <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
+                  <div className="flex items-center">
+                    <SparklesIcon className="h-5 w-5 mr-2 group-hover:animate-pulse" />
+                    <span>Sign In</span>
+                  </div>
                 )}
               </button>
             </div>
-          </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? (
-                <LoadingSpinner size="sm" className="mr-2" />
-              ) : null}
-              {isSubmitting ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
+            {/* Demo Buttons */}
+            <div className="space-y-3">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white text-gray-500 font-medium">Try Demo Accounts</span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleDemoLogin('admin')}
+                  disabled={isSubmitting || isLoading}
+                  className="group relative flex justify-center py-3 px-4 border-2 border-blue-200 text-sm font-semibold rounded-xl text-blue-700 bg-blue-50 hover:bg-blue-100 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
+                >
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 group-hover:animate-pulse"></div>
+                    Admin Demo
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDemoLogin('cashier')}
+                  disabled={isSubmitting || isLoading}
+                  className="group relative flex justify-center py-3 px-4 border-2 border-purple-200 text-sm font-semibold rounded-xl text-purple-700 bg-purple-50 hover:bg-purple-100 hover:border-purple-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
+                >
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-2 group-hover:animate-pulse"></div>
+                    Cashier Demo
+                  </div>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={handleDemoLogin}
-              className="group relative w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-            >
-              Admin Demo
-            </button>
-            <button
-              type="button"
-              onClick={handleCashierDemo}
-              className="group relative w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-            >
-              Cashier Demo
-            </button>
-          </div>
-        </form>
+        {/* Footer */}
+        <div className="text-center">
+          <p className="text-sm text-gray-500">
+            Powered by{' '}
+            <span className="font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Smart Retailer POS
+            </span>
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            Modern • Secure • Reliable
+          </p>
+        </div>
       </div>
     </div>
   )
