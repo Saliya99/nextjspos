@@ -34,6 +34,17 @@ const allNavigation: NavigationItem[] = [
   { name: 'Reports', href: '/reports', icon: ChartBarIcon, roles: ['admin'] },
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon, roles: ['admin'] },
   { name: 'GRN', href: '/grn', icon: ClipboardDocumentListIcon, roles: ['admin', 'storekeeper'] },
+  { 
+    name: 'Fixed Assets', 
+    href: '/far/assets', 
+    icon: CubeIcon, 
+    roles: ['admin'],
+    submenu: [
+      { name: 'Asset Register', href: '/far/assets', icon: CubeIcon },
+      { name: 'Depreciation Tracking', href: '/far/depreciation', icon: ChartBarIcon },
+      { name: 'User Management', href: '/far/users', icon: UsersIcon },
+    ]
+  },
 ]
 
 export function useRoleBasedNavigation() {

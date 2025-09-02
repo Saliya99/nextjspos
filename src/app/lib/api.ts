@@ -864,6 +864,164 @@ class ApiClient {
     }
   }
 
+  // Fixed Asset Register (FAR) API methods
+  async getShopProfile() {
+    try {
+      const response = await this.makeApiRequest('shop/profile', {}, 'GET')
+      return this.handleResponse(response, null, 'Failed to get shop profile')
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to get shop profile')
+    }
+  }
+
+  async updateShopProfile(profileData: any) {
+    try {
+      const response = await this.makeApiRequest('shop/profile', profileData, 'PUT')
+      return this.handleResponse(response, null, 'Failed to update shop profile')
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to update shop profile')
+    }
+  }
+
+  async uploadShopLogo(logoFile: File) {
+    try {
+      const response = await this.makeApiRequest('shop/upload-logo', { logo: logoFile }, 'POST')
+      return this.handleResponse(response, null, 'Failed to upload shop logo')
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to upload shop logo')
+    }
+  }
+
+  async getPaymentMethods() {
+    try {
+      const response = await this.makeApiRequest('payment-methods', {}, 'GET')
+      return this.handleResponse(response, null, 'Failed to get payment methods')
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to get payment methods')
+    }
+  }
+
+  async createGrnWithItems(grnData: any) {
+    try {
+      const response = await this.makeApiRequest('grn/create', grnData, 'POST')
+      return this.handleResponse(response, null, 'Failed to create GRN')
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to create GRN')
+    }
+  }
+
+  async getGrnList(params?: any) {
+    try {
+      const response = await this.makeApiRequest('grn/list', params, 'GET')
+      return this.handleResponse(response, null, 'Failed to get GRN list', true)
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to get GRN list', true)
+    }
+  }
+
+  async searchGRNs(params: any) {
+    try {
+      const response = await this.makeApiRequest('grn/search', params, 'POST')
+      return this.handleResponse(response, null, 'Failed to search GRNs', true)
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to search GRNs', true)
+    }
+  }
+
+  async getGRNDetails(grnId: number) {
+    try {
+      const response = await this.makeApiRequest(`grn/${grnId}`, {}, 'GET')
+      return this.handleResponse(response, null, 'Failed to get GRN details')
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to get GRN details')
+    }
+  }
+
+  async deleteGRN(grnId: number) {
+    try {
+      const response = await this.makeApiRequest(`grn/${grnId}`, {}, 'DELETE')
+      return this.handleResponse(response, null, 'Failed to delete GRN')
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to delete GRN')
+    }
+  }
+
+  async getReOrderItems(params?: any) {
+    try {
+      const response = await this.makeApiRequest('grn/reorder-items', params, 'GET')
+      return this.handleResponse(response, null, 'Failed to get re-order items', true)
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to get re-order items', true)
+    }
+  }
+
+  async searchReOrderItems(params: any) {
+    try {
+      const response = await this.makeApiRequest('grn/reorder-items/search', params, 'POST')
+      return this.handleResponse(response, null, 'Failed to search re-order items', true)
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to search re-order items', true)
+    }
+  }
+
+  async getSalesStatistics(startDate: string, endDate: string, grouping: string) {
+    try {
+      const response = await this.makeApiRequest('reports/sales-statistics', {
+        start_date: startDate,
+        end_date: endDate,
+        grouping: grouping
+      }, 'POST')
+      return this.handleResponse(response, null, 'Failed to get sales statistics')
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to get sales statistics')
+    }
+  }
+
+  async getSalesTrends(startDate: string, endDate: string, grouping: string) {
+    try {
+      const response = await this.makeApiRequest('reports/sales-trends', {
+        start_date: startDate,
+        end_date: endDate,
+        grouping: grouping
+      }, 'POST')
+      return this.handleResponse(response, null, 'Failed to get sales trends')
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to get sales trends')
+    }
+  }
+
+  async getTopProducts(startDate: string, endDate: string, page: number, perPage: number) {
+    try {
+      const response = await this.makeApiRequest('reports/top-products', {
+        start_date: startDate,
+        end_date: endDate,
+        page: page,
+        per_page: perPage
+      }, 'POST')
+      return this.handleResponse(response, null, 'Failed to get top products')
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to get top products')
+    }
+  }
+
+  async getDiscountReport(params: any) {
+    try {
+      const response = await this.makeApiRequest('reports/discounts', params, 'POST')
+      return this.handleResponse(response, null, 'Failed to get discount report')
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to get discount report')
+    }
+  }
+
+  async getCustomerPurchaseHistory(params: any) {
+    try {
+      const response = await this.makeApiRequest('reports/customer-purchase-history', params, 'POST')
+      return this.handleResponse(response, null, 'Failed to get customer purchase history')
+    } catch (error) {
+      return this.handleResponse(null, error, 'Failed to get customer purchase history')
+    }
+  }
+
   // Utility function to format numbers with commas
   private formatNumber(value: string | number): string {
     const num = typeof value === 'string' ? parseFloat(value) : value

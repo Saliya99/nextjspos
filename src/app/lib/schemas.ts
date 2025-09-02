@@ -85,3 +85,19 @@ export type InvoiceFormData = z.infer<typeof invoiceSchema>
 export type SearchFormData = z.infer<typeof searchSchema>
 export type DateRangeFormData = z.infer<typeof dateRangeSchema>
 export type SettingsFormData = z.infer<typeof settingsSchema>
+
+// Shop Profile Schema
+export const shopProfileSchema = z.object({
+  shopName: z.string().min(1, 'Shop name is required'),
+  addressLine1: z.string().min(1, 'Address line 1 is required'),
+  addressLine2: z.string().optional(),
+  addressLine3: z.string().optional(),
+  shopLandline: z.string().optional(),
+  shopMobile: z.string().min(1, 'Mobile number is required'),
+  shopEmail: z.string().email('Please enter a valid email address'),
+  taxNumber: z.string().optional(),
+  brNumber: z.string().optional(),
+  currency: z.string().min(1, 'Currency is required')
+})
+
+export type ShopProfileFormData = z.infer<typeof shopProfileSchema>
